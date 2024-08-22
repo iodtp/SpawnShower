@@ -22,33 +22,35 @@ tagpro.ready(function waitForId() {
     const locations = [];
     tagpro.socket.on("p", function (data) {
         data = data.u || data;
-        for (let i = 0, l = data.length; i != l; i++) {
-            if(data[i].playTime && data[i].playTime != "00:00"){
-                drawShit = false;
-                deleteDrawings(locations);
-            }
-            if (tagpro.state === 1) {
-                if (drawShit == true){
+        if(drawShit) {
+            for (let i = 0, l = data.length; i != l; i++) {
+                if(data[i].playTime && data[i].playTime != "00:00"){
                     drawShit = false;
                     deleteDrawings(locations);
                 }
-            }
-            else if(first) {
-                first = false;
-                for (const [key, value] of Object.entries(tagpro.players)){
-                    let xpos = value.x;
-                    let ypos = value.y;
-                    let ball = value.team === 1 ? "redball" : "blueball"; // which color shall we draw
-                    tagpro.tiles.draw(tagpro.renderer.layers.background, ball,  { x: xpos, y: ypos }, 40, 40);
-                    locations.push([`${key}`, xpos, ypos]);
+                if (tagpro.state === 1) {
+                    if (drawShit == true){
+                        drawShit = false;
+                        deleteDrawings(locations);
+                    }
                 }
-            }
-            else if (data[i].id != myId && drawShit){
-                let xpos = tagpro.players[`${data[i].id}`].x;
-                let ypos = tagpro.players[`${data[i].id}`].y;
-                let ball = tagpro.players[`${data[i].id}`].team === 1 ? "redball" : "blueball"; // which color shall we draw
-                tagpro.tiles.draw(tagpro.renderer.layers.background, ball,  { x: xpos, y: ypos }, 40, 40);
-                locations.push([`${data[i].id}`, xpos, ypos]);
+                else if(first) {
+                    first = false;
+                    for (const [key, value] of Object.entries(tagpro.players)){
+                        let xpos = value.x;
+                        let ypos = value.y;
+                        let ball = value.team === 1 ? "redball" : "blueball"; // which color shall we draw
+                        tagpro.tiles.draw(tagpro.renderer.layers.background, ball,  { x: xpos, y: ypos }, 40, 40);
+                        locations.push([`${key}`, xpos, ypos]);
+                    }
+                }
+                else if (data[i].id != myId && drawShit){
+                    let xpos = tagpro.players[`${data[i].id}`].x;
+                    let ypos = tagpro.players[`${data[i].id}`].y;
+                    let ball = tagpro.players[`${data[i].id}`].team === 1 ? "redball" : "blueball"; // which color shall we draw
+                    tagpro.tiles.draw(tagpro.renderer.layers.background, ball,  { x: xpos, y: ypos }, 40, 40);
+                    locations.push([`${data[i].id}`, xpos, ypos]);
+                }
             }
         }
     });
@@ -85,6 +87,7 @@ function deleteDrawings(locations) {
         }
     }
 }
+
 
 
 
